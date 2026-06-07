@@ -1,7 +1,8 @@
 #!/bin/bash
-set -x 
 
-python3 main.py &
+python main.py &
+
+sleep 5
 
 response=$(curl -s http://localhost:8000/health)
 
