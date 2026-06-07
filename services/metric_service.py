@@ -7,9 +7,9 @@ import os
 def get_system_metrics() :
     cpu_per = psutil.cpu_percent(interval=1)
     print("CPU utilisation is : ",cpu_per)
-    disk_usage_per = psutil.disk_usage("C:")[3]
+    disk_usage_per = psutil.disk_usage(os.sep).percent
     print("Disk utilisation is : ",disk_usage_per)
-    mem_usage_per = psutil.virtual_memory()[2]
+    mem_usage_per = psutil.virtual_memory().percent
     print("RAM utilisation is : ",mem_usage_per)
     
     cpu_threshold = 50
