@@ -1,0 +1,44 @@
+name: resuable build-test workflow
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        type: string
+        required: true
+      run-tests:
+        type: boolean
+        default: true
+    outputs:
+      test_result:
+        description: The output of the test checking app functionality
+        value: ${{jobs.build-test.outputs.test_result}}
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    outputs:
+      test_result: ${{ steps.run_test.outputs.test_result }}
+    steps:
+      - name: code checkout
+        uses: actions/checkout@v4
+
+      - name: Install python version
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{inputs.python-version}}
+
+      - name: Install dependencies
+        run: |
+            pip install --no-cache-dir -r requirements.txt
+
+      - name: run tests
+        if: ${{inputs.run-tests == true}}
+        id: run_test
+        run: |
+            sh test.sh
+            if ($? == 0); then
+              echo "test_result=passed" >> $GITHUB_OUTPUT
+            else;
+              echo "test_result=failed" >> $GITHUB_OUTPUT
+            fi

@@ -1,0 +1,24 @@
+name: on pr
+
+on:
+    pull_request:
+        branches: [main]
+        types: [opened,synchronize]
+
+jobs:
+    call-build-test:
+        uses: ./.github/workflows/reusable-build-test.yml
+        with:
+            python-version: 3.12
+            run-tests: true
+
+    pr-comment:
+        needs: [call-build-test]
+        runs-on: ubuntu-latest
+        steps:
+            - name: print summary
+              run: |
+                    if ${{ needs.call-build-test.outputs.test_result == 'passed' }};then
+                    echo "PR checks passed for branch: ${{ github.head_ref }}"
+                    else;
+                    echo "PR checks failed for branch: ${{ github.head_ref }}"
