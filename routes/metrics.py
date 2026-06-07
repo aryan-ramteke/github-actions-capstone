@@ -17,6 +17,6 @@ def get_metrics():
         metrics = get_system_metrics()
         return metrics
     except: 
-        raise HTTPException(status_code=500,default="Internal Server Error!!")
+        raise HTTPException(status_code=500,detail="Internal Server Error!!")
         
 
