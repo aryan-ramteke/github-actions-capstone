@@ -40,18 +40,48 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
+      # New Step: Formats your input tags for docker/metadata-action
+      - name: Parse Raw Tags
+        id: format-tags
+        run: |
+          echo "formatted_tags<<EOF" >> $GITHUB_OUTPUT
+          while IFS= read -r line; do
+            # Trim whitespace and avoid empty lines
+            tag_value=$(echo "$line" | xargs)
+            if [ -n "$tag_value" ]; then
+              echo "type=raw,value=${tag_value}" >> $GITHUB_OUTPUT
+            fi
+          done <<< "${{ inputs.tag }}"
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Docker Metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ inputs.docker_username }}/${{ inputs.image_name }}
+          tags: ${{ steps.format-tags.outputs.formatted_tags }}
+
       - name: Build and push
         uses: docker/build-push-action@v7
         with:
           context: .
           push: true
           tags: |
-              ${{ inputs.docker_username }}/${{ inputs.image_name }}:${{ inputs.tag }}
+              ${{ steps.meta.outputs.tags }}
               
       - name: Generate full image url output
         id: set-url
         run: |
-            full_path=${{ inputs.docker_username }}/${{ inputs.image_name }}:${{ inputs.tag }}
-            echo "image_url=$full_path" >> $GITHUB_OUTPUT
-            echo "successfully built and pushed: $full_path"
+            # Filters the tags list to extract only the path containing 'sha-'
+            sha_tag=$(echo "${{ steps.meta.outputs.tags }}" | grep ":sha-")
+            
+            # Fallback: if 'sha-' is not found for any reason, fall back to the first available tag
+            if [ -z "$sha_tag" ]; then
+              sha_tag=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
+            fi
+
+            echo "image_url=$sha_tag" >> $GITHUB_OUTPUT
+
+            echo "successfully built and pushed tags:"
+            echo "${{ steps.meta.outputs.tags }}"
     
