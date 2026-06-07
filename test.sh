@@ -9,7 +9,7 @@ echo $response
 if response['status'] == 'healthy'; then
 	echo "health check passed"
 	exit 0
-else;
+else
 	echo "Health chcek failed"
 	exit 1
 fi
