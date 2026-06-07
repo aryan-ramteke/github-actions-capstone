@@ -36,9 +36,8 @@ jobs:
         if: ${{inputs.run-tests == true}}
         id: run_test
         run: |
-            sh test.sh
-            if ($? == 0); then
+            if sh test.sh; then
               echo "test_result=passed" >> $GITHUB_OUTPUT
-            else;
+            else
               echo "test_result=failed" >> $GITHUB_OUTPUT
             fi

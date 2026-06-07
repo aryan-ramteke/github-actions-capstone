@@ -2,14 +2,18 @@
 
 python main.py &
 
+sleep 5
+
 response=$(curl -s http://localhost:8000/health)
 
 echo $response
 
-if response['status'] == 'healthy'; then
+status=$(echo "$response" | jq -r .Status)
+
+if [ "$status" = 'healthy' ]; then
 	echo "health check passed"
 	exit 0
-else;
-	echo "Health chcek failed"
+else
+	echo "Health check failed"
 	exit 1
 fi
