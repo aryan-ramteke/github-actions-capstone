@@ -20,7 +20,7 @@ def get_system_metrics() :
     disk_status = "Healthy" if disk_usage_per <= disk_th  else "High Disk Usage"
     mem_status = "Healthy" if mem_usage_per <= mem_th  else "High RAM Usage"
    
-    if "$cpu_status" == "Healthy" && "$disk_status" == "Healthy" && "$mem_status" == "Healthy":
+    if "$cpu_status" == "Healthy" & "$disk_status" == "Healthy" & "$mem_status" == "Healthy":
         status = "healthy"
         
     
