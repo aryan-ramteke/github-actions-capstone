@@ -6,7 +6,9 @@ response=$(curl -s http://localhost:8000/health)
 
 echo $response
 
-if ${response[Status]} == 'healthy'; then
+status=$(echo "$response" | jq -r .Status)
+
+if $status == 'healthy'; then
 	echo "health check passed"
 	exit 0
 else
