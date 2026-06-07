@@ -8,7 +8,7 @@ echo $response
 
 status=$(echo "$response" | jq -r .Status)
 
-if $status == 'healthy'; then
+if [ "$status" = 'healthy' ]; then
 	echo "health check passed"
 	exit 0
 else
