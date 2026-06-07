@@ -1,0 +1,43 @@
+name: CI
+
+on:
+    push:
+        branches: [main]
+
+jobs:
+    call-build-test:
+        uses: ./.github/workflows/reusable-build-test.yml
+        with:
+            python-version: 3.12
+            run-tests: true
+
+    generate-sha:
+        runs-on: ubuntu-latest
+        outputs:
+            short-sha: ${{ steps.gen_sha.outputs.short_sha }}
+        steps:
+            - id: gen_sha
+              run: |
+                 echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+
+    call-reusable-docker:
+        needs: [call-build-test,generate-sha]
+        uses: ./.github/workflows/reusable-docker.yml
+        with:
+            image_name: fast-api-app
+            tag: |
+                latest
+                sha-${{ needs.generate-sha.outputs.short-sha }}
+            docker_username: ${{ vars.DOCKERHUB_USERNAME }}
+        secrets:
+            docker_token: ${{ secrets.DOCKER_TOKEN }}
+
+    deploy:
+        needs: [call-reusable-docker]
+        runs-on: ubuntu-latest
+        steps:
+            - name: info
+              run: |
+                echo "Deploying image: ${{ needs.call-reusable-docker.outputs.image_url }} to production"
+        
+
