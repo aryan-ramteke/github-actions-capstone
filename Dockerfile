@@ -4,7 +4,7 @@ WORKDIR app/
 
 RUN addgroup -S app && adduser -S aryan -G app  && chown aryan:app app/
 
-COPY --chown aryan:app requirements.txt .
+COPY --chown=aryan:app requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt --target=app/libraries/
 
