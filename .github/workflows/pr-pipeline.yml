@@ -22,3 +22,4 @@ jobs:
                     echo "PR checks passed for branch: ${{ github.head_ref }}"
                     else
                     echo "PR checks failed for branch: ${{ github.head_ref }}"
+                    fi
