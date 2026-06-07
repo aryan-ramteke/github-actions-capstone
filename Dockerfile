@@ -12,10 +12,6 @@ FROM gcr.io/distroless/python3 AS deployer
 
 WORKDIR /app
 
-RUN addgroup -S app && adduser -S aryan -G app  && chown aryan:app /app
-
-USER aryan
-
 COPY --from=builder /app/libraries /app/libraries
 
 ENV PYTHONPATH=/app/libraries
