@@ -8,7 +8,7 @@ RUN groupadd -r app && useradd -r -g app aryan
 COPY --chown=aryan:app requirements.txt .
 
 RUN pip install --no-cache-dir --upgrade pip setuptools && \
-    pip install --no-cache-dir -r requirements.txt --target=/app/libraries/
+    pip install --no-cache-dir --platform manylinux1_x86_64 --only-binary=:all:  -r requirements.txt --target=/app/libraries/
 
 COPY . .
 RUN chown -R aryan:app /app
