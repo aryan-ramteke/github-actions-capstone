@@ -1,0 +1,48 @@
+name: health-check
+
+on:
+    schedule:
+        - cron: "0 */12 * * *"
+    workflow_dispatch:
+
+jobs:
+    health-check-with-summary:
+        runs-on: ubuntu-latest
+        steps:
+            
+            - name: Log in to Docker Hub
+              uses: docker/login-action@v3
+              with:
+                username: ${{ vars.DOCKERHUB_USERNAME }}
+                password: ${{ secrets.DOCKER_TOKEN }}
+            
+            - name: pull docker image
+              run: docker pull aryan5/fast-api-app:latest
+            
+            - name: run container in detacjed mode
+              run: docker run -d --name fast-api aryan5/fast-api-app:latest
+
+            - name: wait and send request
+              id: status
+              run: |
+                sleep 5
+                response=$(curl -s http://localhost:8000/health)
+                status=$(echo "$response" | jq -r .Status)
+                if [ "$status" = 'healthy' ]; then
+                    echo "health check passed"
+                else
+                    echo "Health check failed"
+                fi
+                echo "status=$status" >> $GITHUB_OUTPUT
+
+            - name: stop and remove the container
+              run: |
+                    docker stop fast-api
+                    docker rm fast-api
+
+            - name: create summary
+              run: |
+                echo "## Health Check Report" >> $GITHUB_STEP_SUMMARY
+                echo "- Image: fast-api-app:latest" >> $GITHUB_STEP_SUMMARY
+                echo "- Status: ${{ steps.status.outputs.status }}" >> $GITHUB_STEP_SUMMARY
+                echo "- Time: $(date)" >> $GITHUB_STEP_SUMMARY
