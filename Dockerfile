@@ -6,7 +6,8 @@ RUN addgroup -S app && adduser -S aryan -G app  && chown aryan:app /app
 
 COPY --chown=aryan:app requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt --target=/app/libraries/
+RUN apk add --no-cache gcc musl-dev python3-dev && pip install --no-cache-dir --upgrade pip setuptools && \
+    pip install --no-cache-dir -r requirements.txt --target=/app/libraries/
 
 FROM gcr.io/distroless/python3 AS deployer
 
