@@ -19,8 +19,8 @@ jobs:
             - name: pull docker image
               run: docker pull aryan5/fast-api-app:latest
             
-            - name: run container in detacjed mode
-              run: docker run -d --name fast-api aryan5/fast-api-app:latest
+            - name: run container in detached mode
+              run: docker run -d -p 8000:8000 --name fast-api aryan5/fast-api-app:latest
 
             - name: wait and send request
               id: status
