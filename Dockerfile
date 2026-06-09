@@ -1,17 +1,21 @@
-FROM python:3.12-slim AS builder
+FROM python:3.11-slim AS builder
 
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y --no-install-recommends gcc rustc cargo && rm -rf /var/lib/apt/lists/*
-RUN addgroup --system app && adduser --system --ingroup app aryan && chown -R aryan:app /app
-
-USER aryan
+RUN addgroup --system app && adduser --system --ingroup app aryan
 
 COPY requirements.txt .
 
+# Install as root so pip can write to system-controlled locations
+RUN python -m pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN python -m pip install --no-cache-dir -r requirements.txt --target=/app/libraries/
 
 COPY . .
+
+# Ensure non-root user owns app files and installed libraries
+RUN chown -R aryan:app /app /app/libraries
+
+USER aryan
 
 FROM gcr.io/distroless/python3-debian12 AS deployer
 

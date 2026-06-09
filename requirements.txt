@@ -2,5 +2,3 @@ fastapi
 uvicorn
 psutil
 boto3
-pydantic
-pydantic_core 
