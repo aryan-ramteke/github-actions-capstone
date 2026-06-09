@@ -17,6 +17,7 @@ FROM gcr.io/distroless/python3-debian12 AS deployer
 WORKDIR /app
 
 COPY --from=builder /app /app
+COPY --from=builder /etc/passwd /etc/group /etc/
 
 ENV PYTHONPATH=/app/libraries
 
