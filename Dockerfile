@@ -1,7 +1,8 @@
-FROM python:3.14-slim AS builder
+FROM python:3.12-slim AS builder
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y --no-install-recommends gcc rustc cargo && rm -rf /var/lib/apt/lists/*
 RUN addgroup --system app && adduser --system --ingroup app aryan && chown -R aryan:app /app
 
 USER aryan
