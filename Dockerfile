@@ -1,8 +1,8 @@
-FROM python:3.12-slim AS builder
+FROM python:3.14-slim AS builder
 
 WORKDIR /app
 
-RUN addgroup -S app && adduser -S aryan && chown aryan:app /app
+RUN addgroup --system app && adduser --system --ingroup app aryan && chown -R aryan:app /app
 
 USER aryan
 
@@ -19,6 +19,8 @@ WORKDIR /app
 COPY --from=builder /app /app
 
 ENV PYTHONPATH=/app/libraries
+
+USER aryan
 
 EXPOSE 8000
 
