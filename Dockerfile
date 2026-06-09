@@ -8,7 +8,7 @@ USER aryan
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r requirements.txt --target=/app/libraries/
+RUN python -m pip install --no-cache-dir -r requirements.txt --target=/app/libraries/
 
 COPY . .
 
@@ -19,7 +19,7 @@ WORKDIR /app
 COPY --from=builder /app /app
 COPY --from=builder /etc/passwd /etc/group /etc/
 
-ENV PYTHONPATH=/app/libraries
+ENV PYTHONPATH=/app/libraries/
 
 USER aryan
 
