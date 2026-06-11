@@ -61,14 +61,30 @@ jobs:
           images: ${{ inputs.docker_username }}/${{ inputs.image_name }}
           tags: ${{ steps.format-tags.outputs.formatted_tags }}
 
-      - name: Build and push
+      - name: Build image in the local runner
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: |
+              ${{ steps.meta.outputs.tags }}
+
+      - name: Scan Docker Image for Vulnerabilities
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ inputs.docker_username }}/${{ inputs.image_name }}:latest'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+              
+      - name: Build and Push the image
         uses: docker/build-push-action@v7
         with:
           context: .
           push: true
           tags: |
               ${{ steps.meta.outputs.tags }}
-              
+
       - name: Generate full image url output
         id: set-url
         run: |
