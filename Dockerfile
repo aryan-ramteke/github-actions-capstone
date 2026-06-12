@@ -22,7 +22,7 @@ RUN chown -R aryan:app /app /app/libraries
 
 USER aryan
 
-FROM gcr.io/distroless/python3-debian12 AS deployer
+FROM gcr.io/distroless/python3 AS deployer
 
 WORKDIR /app
 
