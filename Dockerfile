@@ -18,7 +18,8 @@ FROM cgr.dev/chainguard/python:latest AS deployer
 
 WORKDIR /app
 
-COPY --from=builder /app /app
+# Copy builder /app contents into final /app (use trailing slashes to avoid nesting)
+COPY --from=builder /app/ /app/
 COPY --from=builder /etc/passwd /etc/group /etc/
 
 # Include both the app root and libraries on Python path
