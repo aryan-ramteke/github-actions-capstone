@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN python -m pip install --no-cache-dir -r requirements.txt --target=/app/libraries/
 
 # Copy only the app source and runtime files
-COPY app/ routes/ services/ main.py /app/
+COPY app routes services main.py /app/
 
 # Ensure non-root user owns app files and installed libraries
 RUN chown -R aryan:app /app /app/libraries
