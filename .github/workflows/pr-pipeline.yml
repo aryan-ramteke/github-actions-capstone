@@ -6,6 +6,14 @@ on:
         types: [opened,synchronize]
 
 jobs:
+    check-vulnerability:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check Dependencies for Vulnerabilities
+              uses: actions/dependency-review-action@v4
+              with:
+                  fail-on-severity: critical
+                  
     call-build-test:
         uses: ./.github/workflows/reusable-build-test.yml
         with:
