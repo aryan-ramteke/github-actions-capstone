@@ -4,9 +4,23 @@ on:
     pull_request:
         branches: [main]
         types: [opened,synchronize]
+permissions:
+  contents: read
+  pull-requests: write
 
 jobs:
+    check-vulnerability:
+        runs-on: ubuntu-latest
+        steps:
+            - name: code checkout
+              uses: actions/checkout@v4
+            - name: Check Dependencies for Vulnerabilities
+              uses: actions/dependency-review-action@v4
+              with:
+                  fail-on-severity: critical
+
     call-build-test:
+        needs: [check-vulnerability]
         uses: ./.github/workflows/reusable-build-test.yml
         with:
             python-version: 3.12
